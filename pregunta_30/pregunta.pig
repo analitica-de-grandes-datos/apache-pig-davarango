@@ -33,4 +33,15 @@ $ pig -x local -f pregunta.pig
 
         >>> Escriba su respuesta a partir de este punto <<<
 */
-
+lines = LOAD 'data.csv' USING PigStorage(',') AS (id:chararray, name:chararray, lastname:chararray, birth:chararray, color:chararray, qty:chararray);
+dates = FOREACH lines GENERATE birth, SUBSTRING(birth, 8, 10) AS zeros, GetDay(ToDate(birth, 'yyyy-MM-dd')) AS day, (CASE ToString(ToDate(birth, 'yyyy-MM-dd'), 'EEE')
+        WHEN 'Mon' THEN 'lun,lunes'
+        WHEN 'Tue' THEN 'mar,martes'
+        WHEN 'Wed' THEN 'mie,miercoles'
+        WHEN 'Thu' THEN 'jue,jueves'
+        WHEN 'Fri' THEN 'vie,viernes'
+        WHEN 'Sat' THEN 'sab,sabado'
+        WHEN 'Sun' THEN 'dom,domingo'
+        ELSE 'Unknown'
+    END) AS day_name;
+STORE dates INTO 'output' USING PigStorage (',');
