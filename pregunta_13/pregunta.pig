@@ -21,4 +21,7 @@ $ pig -x local -f pregunta.pig
 
         /* >>> Escriba su respuesta a partir de este punto <<< */
 */
-
+lines = LOAD 'data.csv' USING PigStorage(',') AS (id:chararray, name:chararray, lastname:chararray, birth:chararray, color:chararray, qty:chararray);
+filt = FILTER lines BY (INDEXOF('b', SUBSTRING(color, 0, 1)) == 0);
+data = FOREACH filt GENERATE color;
+STORE data INTO 'output' USING PigStorage (',');
