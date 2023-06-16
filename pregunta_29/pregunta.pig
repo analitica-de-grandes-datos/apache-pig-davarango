@@ -33,4 +33,20 @@ $ pig -x local -f pregunta.pig
 
         >>> Escriba su respuesta a partir de este punto <<<
 */
-
+lines = LOAD 'data.csv' USING PigStorage(',') AS (id:chararray, name:chararray, lastname:chararray, birth:chararray, color:chararray, qty:chararray);
+fulldate = FOREACH lines GENERATE birth, (CASE SUBSTRING(birth, 5, 7)
+        WHEN '01' THEN 'ene'
+        WHEN '02' THEN 'feb'
+        WHEN '03' THEN 'mar'
+        WHEN '04' THEN 'abr'
+        WHEN '05' THEN 'may'
+        WHEN '06' THEN 'jun'
+        WHEN '07' THEN 'jul'
+        WHEN '08' THEN 'ago'
+        WHEN '09' THEN 'sep'
+        WHEN '10' THEN 'oct'
+        WHEN '11' THEN 'nov'
+        WHEN '12' THEN 'dic'
+        ELSE 'Unknown'
+    END) AS month_name, SUBSTRING(birth, 5, 7) as month_number, REPLACE(SUBSTRING(birth, 5, 7), '^0', '') as nozero;
+STORE fulldate INTO 'output' USING PigStorage (',');

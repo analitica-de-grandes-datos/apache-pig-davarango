@@ -12,3 +12,7 @@ $ pig -x local -f pregunta.pig
 
         >>> Escriba su respuesta a partir de este punto <<<
 */
+lines = LOAD 'data.tsv' USING PigStorage('\t') as (a:chararray,b:chararray,c:int);
+groupdata = GROUP lines BY a;
+sumdata = foreach groupdata generate group, COUNT(lines.c);
+STORE sumdata INTO 'output' USING PigStorage (',');
